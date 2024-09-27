@@ -1,0 +1,34 @@
+input CreatePostInput {
+	title: String
+	content: String
+	author: String
+}
+
+input GetPostRequest {
+	id: Int
+}
+
+type GetPostResponese {
+	item: Post
+}
+
+type Post {
+	id: Int
+	title: String
+	content: String
+	author: String
+	createdAt: String
+}
+
+type Mutation {
+	createPost(input: CreatePostInput): Post
+}
+
+type Query {
+	getPost(input: GetPostRequest): GetPostResponese
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+}
