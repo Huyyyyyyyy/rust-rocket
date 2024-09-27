@@ -47,7 +47,7 @@ async fn graphql_query(schema: &State<MySchema>, query: GraphQLQuery) -> GraphQL
 
 #[rocket::post("/graphql", data = "<request>", format = "application/json", rank = 1)]
 async fn graphql_request(schema: &State<MySchema>, request: GraphQLRequest) -> GraphQLResponse {
-    println!("Here is the request{:?}", request);
+    println!("Here is the request {:?}", request);
     request.execute(schema.inner()).await
 }
 
@@ -57,22 +57,22 @@ async fn handle_lambda_event(
     schema: MySchema, // Accept schema directly without `State`
 ) -> Result<Value, Error> {
     println!("Here is payload {}", event.payload);
-    let selection_set_graphql = event.payload["info"]["selectionSetGraphQL"].as_str().unwrap();
-    let route  = event.payload["info"]["fieldName"].as_str().unwrap();
-    let query = format!(
-        "query MyQuery {{\n  {}(id: \"\") {{\n    {}\n  }}\n}}",
-        route,
-        selection_set_graphql.trim()
-    );
-    let variables = if let Some(arguments) = event.payload["arguments"].as_object() {
-        Variables::from_json(Value::Object(arguments.clone()))
-    } else {
-        Variables::default()
-    };
-    // let query = "query MyQuery {\n  getPost(id: \"1\") {\n    author\n    createdAt\n    content\n    id\n    title\n  }\n}";
+    // let selection_set_graphql = event.payload["info"]["selectionSetGraphQL"].as_str().unwrap();
+    // let route  = event.payload["info"]["fieldName"].as_str().unwrap();
+    // let query = format!(
+    //     "query MyQuery {{\n  {}(id: \"\") {{\n    {}\n  }}\n}}",
+    //     route,
+    //     selection_set_graphql.trim()
+    // );
+    // let variables = if let Some(arguments) = event.payload["arguments"].as_object() {
+    //     Variables::from_json(Value::Object(arguments.clone()))
+    // } else {
+    //     Variables::default()
+    // };
+    let query = "query MyQuery {\n  getPost(id: \"1\") {\n    author\n    createdAt\n    content\n    id\n    title\n  }\n}";
 
     let mut graphql_request_arg = Request::new(query);
-    graphql_request_arg = graphql_request_arg.variables(variables);
+    graphql_request_arg = graphql_request_arg.variables(Variables::default());
 
     let graphql_request_rocket = GraphQLRequest(graphql_request_arg);
 
