@@ -17,8 +17,8 @@ pub async fn graphql_query(schema: &State<SchemaGraphQL>, query: GraphQLQuery) -
 #[rocket::post("/graphql", data = "<request>", format = "application/json", rank = 1)]
 pub async fn graphql_request(
     schema: &State<SchemaGraphQL>,
-    mut request: GraphQLRequest,
+    request: GraphQLRequest,
 ) -> GraphQLResponse {
-    println!("Here is the query {:?}", request.0.query);
+    println!("request : {:?}",request);
     request.execute(schema.inner()).await
 }
