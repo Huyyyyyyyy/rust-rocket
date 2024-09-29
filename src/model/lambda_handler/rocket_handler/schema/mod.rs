@@ -54,7 +54,7 @@ struct Mutation;
 impl Mutation {
     async fn create_post(&self, _ctx: &Context<'_>, input: CreatePostInput) -> Result<Post> {
         let post = Post {
-            id: 1, // Example post ID generation
+            id: 1,
             title: input.title,
             content: input.content,
             author: input.author,
