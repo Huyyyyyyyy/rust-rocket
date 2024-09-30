@@ -4,7 +4,7 @@ pub mod rocket_handler;
 use lambda_runtime::{Error, LambdaEvent};
 use rocket::State;
 use rocket_handler::{graphql_request, SchemaGraphQL};
-use serde_json::{json, Value};
+use serde_json::Value;
 
 pub async fn handle_lambda_event(
     event: LambdaEvent<Value>,
@@ -44,7 +44,6 @@ pub async fn handle_lambda_event(
 
     let response: GraphQLResponse =
         graphql_request(&State::from(&schema), graphql_request_rocket).await;
-
     let data: ConstValue;
     if let BatchResponse::Single(single_response) = response.0 {
         data = single_response.data;
@@ -52,10 +51,40 @@ pub async fn handle_lambda_event(
         data = ConstValue::default();
     }
 
-    println!("data : {}", data);
-    Ok(json!({
-        "status" : "success",
-        "statusCode" : 200,
-        "data" : data.into_json()?,
-    }))
+    let new_data = access_object_value(data, route).unwrap();
+    let json_data: Value = graphql_value_to_json(&new_data);
+    Ok(json_data)
+}
+
+fn graphql_value_to_json(value: &ConstValue) -> Value {
+    match value {
+        ConstValue::Null => Value::Null,
+        ConstValue::Boolean(b) => Value::Bool(*b),
+        ConstValue::Number(n) => {
+            if let Some(i) = n.as_i64() {
+                Value::Number(i.into())
+            } else if let Some(f) = n.as_f64() {
+                Value::Number(serde_json::Number::from_f64(f).unwrap())
+            } else {
+                Value::Null
+            }
+        }
+        ConstValue::String(s) => Value::String(s.clone()),
+        ConstValue::List(l) => Value::Array(l.iter().map(graphql_value_to_json).collect()),
+        ConstValue::Object(o) => {
+            let mut map = serde_json::Map::new();
+            for (key, val) in o {
+                map.insert(key.clone().to_string(), graphql_value_to_json(val));
+            }
+            Value::Object(map)
+        }
+        _ => Value::Null,
+    }
+}
+
+fn access_object_value(object: ConstValue, key: &str) -> Option<ConstValue> {
+    match object {
+        ConstValue::Object(map) => map.get(key).cloned(),
+        _ => None,
+    }
 }

@@ -19,6 +19,7 @@ pub async fn graphql_request(
     schema: &State<SchemaGraphQL>,
     request: GraphQLRequest,
 ) -> GraphQLResponse {
-    println!("request : {:?}",request);
-    request.execute(schema.inner()).await
+    println!("requesttt : {:?}", request);
+    let response: GraphQLResponse = request.execute(schema.inner()).await;
+    response
 }
