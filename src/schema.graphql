@@ -9,7 +9,9 @@ input GetPostRequest {
 }
 
 type GetPostResponese {
-	item: Post
+	statusCode: Int
+	status: String
+	data: Post
 }
 
 type Post {
