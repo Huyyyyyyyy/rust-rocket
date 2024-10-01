@@ -3,7 +3,8 @@
 
 [print_schema]
 file = "src/schema.rs"
+filter = { only_tables = ["pt_account", "pt_account_details"] }
 custom_type_derives = ["diesel::query_builder::QueryId", "Clone"]
 
 [migrations_directory]
-dir = "C:\\Users\\MY PC\\Downloads\\rust-rocket\\migrations"
+dir = "C:\\Users\\Trung\\Downloads\\rust-rocket\\migrations"

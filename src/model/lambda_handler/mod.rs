@@ -53,6 +53,7 @@ pub async fn handle_lambda_event(
 
     let new_data = access_object_value(data, route).unwrap();
     let json_data: Value = graphql_value_to_json(&new_data);
+
     Ok(json_data)
 }
 
