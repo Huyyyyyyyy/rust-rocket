@@ -12,5 +12,8 @@ async-graphql = "7.0.11"
 async-graphql-rocket = "7.0.11"
 rocket = "0.5.1"
 lambda_http = "0.13.0"
-diesel = { version = "2.2.0", features = ["postgres"] }
+diesel = { version = "2.2.0", features = ["chrono", "postgres", "64-column-tables"] }
 dotenvy = "0.15"
+chrono = { version = "0.4.38", features = ["serde"] }
+bigdecimal = { version = "0.4.5", features = ["serde"] }
+uuid = { version = "1.10.0", features = ["serde"] }
